@@ -1,8 +1,8 @@
 use futures::StreamExt;
+use jwalk::WalkDir;
 use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
 use tokio::{fs::File, io::AsyncReadExt};
-use walkdir::WalkDir;
 
 pub async fn get_file_contents(path: &str) -> Option<String> {
     let mut file = match File::open(path).await {
@@ -26,7 +26,6 @@ pub async fn search(
             WalkDir::new(root)
                 .into_iter()
                 .filter_map(|entry| entry.ok())
-                .par_bridge()
                 .filter(|entry| {
                     if let Some(file_name) = entry.path().file_name() {
                         let file_name = file_name.to_string_lossy();
